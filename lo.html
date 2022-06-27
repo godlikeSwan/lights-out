@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+html {
+  background-color: grey;
+}
+body {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding-top: 100px;
+}
+article {
+  display: flex;
+  padding-top: 100px;
+}
+main {
+  flex: .8 0
+}
+aside {
+  flex: .2 1
+}
+  </style>
+  <title>Lights out</title>
+</head>
+<body>
+  <header><h1>Lights out</h1><nav><a href="/">Back</a></nav></header>
+  <article>
+    <main id="lo">table with buttons</main>
+    <aside>options <button id="reset-btn">reset</button></aside>
+  </article>
+  <script>
+const root = document.getElementById('lo')
+class Cell {
+  field
+  neighbours = { left: null, up: null, right: null, down: null }
+
+  constructor (field) {
+    this.field = field
+  }
+
+  setNeighbour (n) {
+    'left up right down'.split(' ').forEach((dir) => {
+      if (dir in n) this.neighbours[dir]= n[dir]
+    })
+  }
+}
+
+class Field {
+  cells = null
+  size = null
+
+  constructor (size) {
+    this.size = size
+    this.cells = []
+    for (let j = 0; j < size; j += 1) {
+      this.cells[j] = []
+      for (let i = 0; i < size; i += 1) {
+        this.cells[j][i] = true
+      }
+    }
+  }
+
+  render () {
+    return `<table>${
+      this.cells.map((row, y) => `<tr>${
+        row.map((c, x) => `<td><button onclick="globalThis.handleMove(${x}, ${y})">${
+          c
+        }</button></td>`).join('')
+      }</tr>`).join('')
+    }</table>`
+  }
+
+  handleMove (x, y) {
+    this.invert(x, y)
+    if (x !== 0) this.invert(x - 1, y)
+    if (x !== this.size - 1) this.invert(x + 1, y)
+    if (y !== 0) this.invert(x, y - 1)
+    if (y !== this.size - 1) this.invert(x, y + 1)
+    root.innerHTML = this.render()
+  }
+
+  invert (x, y) {
+    this.cells[y][x] = !this.cells[y][x]
+  }
+}
+
+const field = new Field(5)
+console.log(field.render())
+root.innerHTML = field.render()
+globalThis.handleMove = field.handleMove.bind(field)
+
+  </script>
+</body>
+</html>
