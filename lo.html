@@ -58,20 +58,6 @@ aside {
   </article>
   <script>
 const root = document.getElementById('lo')
-class Cell {
-  field
-  neighbours = { left: null, up: null, right: null, down: null }
-
-  constructor (field) {
-    this.field = field
-  }
-
-  setNeighbour (n) {
-    'left up right down'.split(' ').forEach((dir) => {
-      if (dir in n) this.neighbours[dir]= n[dir]
-    })
-  }
-}
 
 class Field {
   cells = null
@@ -81,6 +67,7 @@ class Field {
 
   init (size) {
     document.documentElement.classList.remove('win')
+
     this.size = size
     this.cells = []
     for (let j = 0; j < size; j += 1) {
@@ -89,7 +76,7 @@ class Field {
         this.cells[j][i] = { value: false, element: null }
       }
     }
-    const numOfTurns = Math.floor(Math.random() * 20) + 20
+
     const table = document.createElement('table')
     table.append(...this.cells.map((row, y) => {
       const tr = document.createElement('tr')
@@ -105,12 +92,9 @@ class Field {
       return tr
     }))
     root.replaceChildren(table)
+
+    const numOfTurns = Math.floor(Math.random() * 20) + 20
     for (let i = 0; i < numOfTurns; i += 1) this.handleMove(Math.floor(Math.random() * this.size), Math.floor(Math.random() * this.size))
-    // root.innerHTML = `<table>${
-    //   this.cells.map((row, y) => `<tr>${
-    //     row.map((c, x) => `<td><button class="${(c) ? 'light' : 'dark'}" onclick="globalThis.handleMove(${x}, ${y})"></button></td>`).join('')
-    //   }</tr>`).join('')
-    // }</table>`
   }
 
   handleMove (x, y) {
